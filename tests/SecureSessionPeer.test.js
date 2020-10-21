@@ -3,7 +3,7 @@ const nacl = require('libsodium-wrappers')
 
 const SecureSessionPeer = require('../src/SecureSessionPeer')
 
-describe('SecureSessionPeer', () => {
+describe('SecureSessionPeer', () => {                                 // first party - server
   let peer
   beforeAll(async () => {
     peer = await SecureSessionPeer()
@@ -38,7 +38,7 @@ describe('SecureSessionPeer', () => {
   describe('connects to another SecureSessionPeer', () => {
     let otherPeer
     beforeAll(async () => {
-      otherPeer = await SecureSessionPeer(peer)
+      otherPeer = await SecureSessionPeer(peer)                                //  second party - client
     })
     it('resulting in 2 distinct peers with different public keys', () => {
       expect(peer).not.toEqual(otherPeer)
@@ -63,7 +63,7 @@ describe('SecureSessionPeer', () => {
         expect(otherPeerNonce).toBeDefined()
       })
       it('that can be decrypted messages by the other peer', () => {
-        expect(otherPeer.decrypt(peerCiphertext, peerNonce)).toEqual(msg)
+        expect(otherPeer.decrypt(peerCiphertext, peerNonce)).toEqual(msg)     // decrypt received message
       })
       it('that cannot be decrypted with the public key', () => {
         try {
