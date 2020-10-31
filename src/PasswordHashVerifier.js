@@ -2,8 +2,8 @@ const nacl = require('libsodium-wrappers');
 //const opslimit = nacl.crypto_pwhash_OPSLIMIT_MIN
 //const memlimit = nacl.crypto_pwhash_MEMLIMIT_MIN
 
-module.exports = () => {
-    nacl.ready
+module.exports = async() => {
+    await nacl.ready
 
     return Object.freeze({
           

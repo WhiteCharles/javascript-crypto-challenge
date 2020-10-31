@@ -1,115 +1,89 @@
 const nacl = require('libsodium-wrappers');
-const Encryptor =  require('./Encryptor.js');
+const Encryptor =  require('./Encryptor');
 const Decryptor = require('./Decryptor');
 
-// module.exports = async() => {   /// disapp
-//    await nacl.ready;   /// disapp
-    const secureSessionPeer = async(securePeer = null) => {  // capitalized to SecureSessionPeer --> const SecureSessionPeer = (securePeer = null) => {  // added 'async' in 'disapp'
+// secureSession - peer - server should be instantiated
+// peer should have a public key -- out of keypair
+// public key of peer should be retrievable
+// public key of peer should not be changeable
+// peer should have private hidden key
+// private key of peer should not be changeable
+
+// otherPeer - client should be instantiated
+// public key of peer and otherPeer should be different
+// parties should be able to encrypt
+// should be able to create ciphertext
+// should be able to decrypt ciphertext
+// should be tamperproof
+// should be able to send-receive messages
+
+    const secureSessionPeer = async(securePeer = null) => {  
+        // begin add
         await nacl.ready;
-        //const {publicKey, privateKey} = nacl.crypto_box_keypair();
         const secureSessionPeer = {};
-        // const peer = nacl.crypto_box_keypair();  /// = {publicKey, privateKey}
-        //////***const peer = nacl.crypto_box_keypair();
-        //     return peer;
-        
-        //let peer
-        //let pk, sk, rx, tx
-        //pk = nacl.crypto_box_PUBLICKEYBYTES
-        //sk = nacl.crypto_box_SECRETKEYBYTES
-        //peer = nacl.crypto_kx_keypair(pk[nacl.crypto_kx_PUBLICKEYBYTES], sk[nacl.crypto_kx_SECRETKEYBYTES])
-        //const peer = {publicKey, privateKey}
-        
-        //let publicKey = peer.publicKey;
-        //peer.publicKey = nacl.crypto_box_PUBLICKEYBYTES();
-        //peer.privateKey = nacl.crypto_box_SECRETKEYBYTES();
-        //= nacl.crypto_box_keypair()
-        /*****let server_pk = nacl.crypto_kx_PUBLICKEYBYTES
-        let server_sk = nacl.crypto_box_SECRETKEYBYTES
-        const peer = nacl.crypto_kx_keypair(server_pk, server_sk)
-        let publicKey = peer.server_pk***** */
-        // peer, ie server and client, ie otherPeer each generate keypair
-        /*let peer = {publicKey, privateKey}*/// = crypto_kx_keypair(server_pk, server_sk)    // {publicKey, privateKey}
         const {publicKey, privateKey} = nacl.crypto_box_keypair();
-        //*peer.publicKey = publicKey
-        ////peer.publicKey = publicKey
-        /////let otherPeer = crypto_kx_keyPair()
-        // peer/server composes message
-        /*let message = 'Testing secure session'*/
-        // client-otherPeer generates shared keys
-        /*let clientKeys = nacl.crypto_kx_client_session_keys(otherPeer.publicKey, otherPeer.privateKey, peer.publicKey)*/
-        // peer/server encrypts message using his private key and otherPeer/client's public key
-        /*let nonce = nacl.randombytes_buf(nacl.crypto_box_NONCEBYTES)*/
-        //msg, nonce, key
-        /*let peerCiphertext = Encryptor.encrypt(msg, nonce, otherPeer.publicKey)*/
-        ////let peerCiphertext = crypto_box_easy(message, peerNonce, otherPeer.publicKey, peer.privateKey)
-        // otherPeer/client decrypts and verifies message using nonce, its private key and server public key
-        /*let msg = crypto_box_open_easy(peerCiphertext, nonce, peer.publicKey, otherPeer.privateKey, 'text')*/
-        // let peer, nonce // ... add
-        /*const{peer_pk} = nacl.crypto_box_PUBLICKEYBYTES();*/ // ... add nacl.crypto_box_PUBLICKEYBYTES()
-        // const{peer_sk} = nacl.crypto_box_SECRETKEYBYTES(); // ... add {sk} = nacl.crypto_box_SECRETKEYBYTES()
-        // const{peer_rx} = nacl.crypto_kx_SESSIONKEYBYTES(); // ... add
-        // const{peer_tx} = nacl.crypto_tx_SESSIONKEYBYTES(); // ... add
-        // generate peer's key pair
-        // peer = nacl.crypto_kx_keypair(peer_pk, peer_sk);  // ... add {publicKey, key}  nacl.crypto_sign_keypair(pk, sk)
-        /*peer.publicKey = nacl.crypto_box_PUBLICKEYBYTES(sk)*/  //peer_pk; // ... add
-        //let peer  OTHERPEER          // const{otherPeer_pk} = nacl.crypto_box_PUBLICKEYBYTES(); // ... add nacl.crypto_box_PUBLICKEYBYTES()
-        // const{otherPeer_sk} = nacl.crypto_box_SECRETKEYBYTES(); // ... add {sk} = nacl.crypto_box_SECRETKEYBYTES()
-        // const{otherPeer_rx} = nacl.crypto_kx_SESSIONKEYBYTES(); // ... add
-        // const{otherPeer_tx} = nacl.crypto_tx_SESSIONKEYBYTES(); // ... add
-        // generate otherPeer's key pair
-        // const otherPeer = nacl.crypto_kx_keypair(otherPeer_pk, otherPeer_sk);  // ... add {publicKey, key}  nacl.crypto_sign_keypair(pk, sk)
-        // otherPeer.publicKey = otherPeer_pk; // ... add
-        // generate shared keys -- client
-        // if(nacl.crypto_kx_client_session_keys(peer_rx, peer_tx, peer_pk, peer_sk, otherPeer_pk) != 0){
-        //     return 0;        // }
-        // if(nacl.crypto_kx_server_session_keys(otherPeer_pk, peer_sk, peer_pk) != 0){  // otherPeer_rx, otherPeer_tx,  removed parameters
-        //     return 0;        // }
-        //... disapp add
-        secureSessionPeer.publicKey = publicKey;    // given // capitalized to SecureSessionPeer, and following
-        //... disapp add
-        secureSessionPeer.connector = async function(other, keyFn){    // given          // ... disapp
-            //... disapp add
-            secureSessionPeer.peer = other;
-            const key = keyFn(publicKey, privateKey, other.publicKey);
-            secureSessionPeer.Decryptor = await Decryptor(key.sharedRx);    // given//... disapp add  // capitalized to SecureSessionPeer and Decryptor
-            secureSessionPeer.encryptor = await Encryptor(key.sharedTx);    // given//... disapp add
-            // ... //... begin   key calculation
-
-            // ... //... end
-
-            secureSessionPeer.encrypt = function(msg){    // given//... disapp add
-                // peer/server encrypts message using his private key and otherPeer/client's public key
+        // end add
+        secureSessionPeer.publicKey = publicKey;    // given 
+        // begin add
+        // ...
+        const peer = {};
+        
+        // end add
+        secureSessionPeer.connector = async function(otherPeer, keyFn){    // given  - added parameters
+        // begin add
+        
+            //----secureSessionPeer.peer = otherPeer;
+            //----const key = keyFn(publicKey, privateKey, otherPeer.publicKey);
+            // end add
+            secureSessionPeer.Decryptor = await Decryptor(key.sharedRx);    // given
+            secureSessionPeer.Encryptor = await Encryptor(key.sharedTx);    // given
+            // begin add
+            // ...
+            otherPeer.Decryptor = await Decryptor(key.sharedRx);    
+            otherPeer.Encryptor = await Encryptor(key.sharedTx);             
+            // ...
+            // const peerCiphertext = secureSessionPeer.Encryptor.encrypt(msg, nonce);
+            // const peerNonce = nacl.randombytes_buf(nacl.crypto_secretbox_NONCEBYTES);
+            // const otherPeerCiphertext = secureSessionPeer.other.Encryptor.encrypt(msg, nonce); 
+            // const otherPeerNonce =  nacl.randombytes_buf(nacl.crypto_secretbox_NONCEBYTES);
+            // end add
+            secureSessionPeer.encrypt = function(msg){    // given 
                 const nonce = nacl.randombytes_buf(nacl.crypto_secretbox_NONCEBYTES);  // given
-                const ciphertext = secureSessionPeer.encryptor.encrypt(msg, nonce);  // given
+                const ciphertext = secureSessionPeer.Encryptor.encrypt(msg, nonce);  // given
                 return {nonce, ciphertext};  // given
             }
             secureSessionPeer.decrypt = function(msg, nonce){  // given
-                return secureSessionPeer.Decryptor.decrypt(msg, nonce);    // given// capitalized to S.. and Decryptor
+                return secureSessionPeer.Decryptor.decrypt(msg, nonce);    // given
             }   
-             // ...//... begin  disapp add
+            // begin add            
              secureSessionPeer.send = function(msg){
                 secureSessionPeer.peer.message = secureSessionPeer.encrypt(msg);
              }
             secureSessionPeer.receive = function(){
                 return secureSessionPeer.decrypt(secureSessionPeer.message.ciphertext, secureSessionPeer.message.nonce);
             }
-             // ...//... end  disapp add
+            // ...
+            otherPeer.send = function(otherPeerMsg){  //  ??
+                otherPeer.message = secureSessionPeer.encrypt(otherPeerMsg);  // ??
+             }
+            otherPeer.receive = function(){  //  ??
+                return otherPeer.decrypt(otherPeer.message.ciphertext, otherPeer.message.nonce);  //  ??
+            }
+            // end add
+    
         }
-           return Object.freeze(secureSessionPeer, {  // given
-               //secureSessionPeer: secureSessionPeer,
-            //peer : peer, //,   // secureSessionPeer,
-            publicKey: publicKey,    // given//  secureSessionPeer.publicKey//,  peer.publicKey
-        // -- decryptor: ...,  // geexporteerd - nn
-        decrypt: secureSessionPeer.decrypt,/*(ciphertext, nonce) => {  // both arguments need defined              
-                return nacl.crypto_secretbox_open_easy(ciphertext, nonce, key) // decrypt;              
-            }, */  // function
-        // -- encryptor: ..., // geexporteerd - nn
-        encrypt: secureSessionPeer.encrypt,/*(msg, nonce) => {
-            return nacl.crypto_secretbox_easy(msg, nonce, key)
-        }*/  // function                
-        send: secureSessionPeer.send, // n        
-        receive: secureSessionPeer.receive // n
-        });
+        const otherPeer = {}
+        //-----const {publicKey, privateKey} = nacl.crypto_box_keypair();
+        otherPeer.publicKey = publicKey;
 
+           return Object.freeze(secureSessionPeer, {  // given - render object secureSessionPeer immutable
+            publicKey: publicKey, // given
+            // decryptor: ,     // given - to be completed??
+            decrypt: Decryptor.decrypt,   // secureSessionPeer.decrypt,     // given - completed
+            encrypt: Encryptor.encrypt,  // secureSessionPeer.encrypt,     // given - completed
+            // encryptor: ,      // given - to be completed??  
+            send: secureSessionPeer.send,        
+            receive: secureSessionPeer.receive
+        });
     };
-    module.exports = secureSessionPeer;  // add
+    module.exports = secureSessionPeer;  // given
